@@ -36,17 +36,49 @@ class BehaviorColors:
 
 
 class PlotStyle:
-    """Apply a standard ``ggplot``-based style on instantiation."""
+    """Standard figure style for A4 paper (min 6–8 pt text).
 
-    def __init__(self, title_fontsize: int = 16):
-        self.title_fontsize = title_fontsize
+    Figure widths:
+        FULL_WIDTH  = 6.7"  (single-column, ~170 mm usable on A4)
+        HALF_WIDTH  = 3.3"  (two panels side-by-side)
+        THIRD_WIDTH = 2.2"  (three panels)
+    """
+
+    FULL_WIDTH = 6.7   # inches — single-column A4 with 20 mm margins
+    HALF_WIDTH = 3.3
+    THIRD_WIDTH = 2.2
+
+    def __init__(self):
         plt.style.use("ggplot")
         plt.rcParams.update({
-            "axes.labelsize": 14,
-            "axes.titlesize": 14,
-            "xtick.labelsize": 10,
-            "ytick.labelsize": 10,
-            "legend.fontsize": 11,
+            # Font sizes (all ≥ 7 pt for A4 readability)
+            "axes.titlesize": 10,
+            "axes.labelsize": 9,
+            "xtick.labelsize": 8,
+            "ytick.labelsize": 8,
+            "legend.fontsize": 8,
+            "legend.title_fontsize": 9,
+            "figure.titlesize": 11,
+            # Lines & markers
+            "lines.linewidth": 1.2,
+            "lines.markersize": 4,
+            # Axes
+            "axes.linewidth": 0.8,
+            "axes.spines.top": False,
+            "axes.spines.right": False,
+            # Ticks
+            "xtick.major.width": 0.8,
+            "ytick.major.width": 0.8,
+            "xtick.major.size": 3.5,
+            "ytick.major.size": 3.5,
+            # Figure
+            "figure.dpi": 150,
+            "savefig.dpi": 300,
+            "savefig.bbox": "tight",
+            "savefig.pad_inches": 0.05,
+            # Font
+            "font.size": 8,
+            "font.family": "sans-serif",
         })
 
 
