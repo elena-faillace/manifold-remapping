@@ -234,7 +234,7 @@ class MiceDataset:
             self._recordings_cache[subject] = recordings
             return recordings
 
-        pattern = f"{subject.value}_fov*_fam*_*.csv"
+        pattern = f"{subject.value}_fov*_fam*_*.parquet"
         files = glob.glob(str(mouse_dir / pattern))
 
         for file in files:
@@ -393,7 +393,7 @@ class MiceDataset:
         run: str,
         data_type: MiceDataType = MiceDataType.SPIKES,
     ) -> pd.DataFrame:
-        """Load a raw CSV for one recording.
+        """Load a raw Parquet file for one recording.
 
         Args:
             subject: e.g. ``Animals.M62``
@@ -414,9 +414,9 @@ class MiceDataset:
             file_session = session
 
         folder = self._subject_folder(subject)
-        filename = f"{subject.value}_fov{file_fov}_{file_session}-{run}_{data_type.value}.csv"
+        filename = f"{subject.value}_fov{file_fov}_{file_session}-{run}_{data_type.value}.parquet"
         filepath = self.data_path / folder / filename
-        return pd.read_csv(filepath, low_memory=False)
+        return pd.read_parquet(filepath)
 
     def load_spikes_binned(
         self,
@@ -588,13 +588,13 @@ class MiceDataset:
         Returns None if the reference file is missing.
         """
         folder = self._subject_folder(subject)
-        ref_path = self.data_path / folder / f"{subject.value}_fov{fov}_global_index_ref.csv"
+        ref_path = self.data_path / folder / f"{subject.value}_fov{fov}_global_index_ref.parquet"
 
         if not ref_path.exists():
             print(f"Global index file not found: {ref_path}")
             return None
 
-        df_ref = pd.read_csv(ref_path)
+        df_ref = pd.read_parquet(ref_path)
 
         if session not in df_ref.columns:
             print(f"Session '{session}' not in global index file for {subject.value} fov{fov}")

@@ -134,9 +134,9 @@ These are loaded by `remapping.config` and used everywhere instead of hardcoded 
 ```
 DATA_ROOT/
 └── {genotype}_{age}_{mXX}/
-    ├── {mXX}_fov{N}_{session}-{run}_spikes.csv
-    ├── {mXX}_fov{N}_{session}-{run}_traces.csv
-    └── {mXX}_fov{N}_global_index_ref.csv
+    ├── {mXX}_fov{N}_{session}-{run}_spikes.parquet
+    ├── {mXX}_fov{N}_{session}-{run}_traces.parquet
+    └── {mXX}_fov{N}_global_index_ref.parquet
 ```
 
 ### Session Types

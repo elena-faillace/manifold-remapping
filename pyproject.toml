@@ -1,7 +1,7 @@
 [project]
 name = "remapping"
 version = "0.1.0"
-description = "Neural manifold analysis for mice circular-arena head-direction data"
+description = "Neural manifold analysis for mice circular-arena data"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
@@ -9,6 +9,7 @@ dependencies = [
     "matplotlib>=3.10.0",
     "numpy>=2.3.0",
     "pandas>=2.3.0",
+    "pyarrow>=18.0.0",
     "python-dotenv>=1.1.0",
     "scikit-learn>=1.7.0",
     "scipy>=1.16.0",
