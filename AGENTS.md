@@ -31,7 +31,8 @@ manifold-remapping/
 └── notebooks/
     ├── 0.data_overview/
     │   ├── 00_load_data.ipynb
-    │   └── 01_data_statistics.ipynb
+    │   ├── 01_experiments_data_statistics.ipynb
+    │   └── 02_neural_data_statistics.ipynb
     ├── 1.embeddings/
     ├── 2.alignment/
     └── 3.figures/
@@ -347,7 +348,7 @@ Shows the full API of `MiceDataset`:
 6. Plot example tuning curves (a few neurons) and firing rate traces
 7. Show tuning curve smoothing with `smooth_tuning_curves_circularly(kernel_size=20)`
 
-### `01_data_statistics.ipynb` — Dataset Overview
+### `01_experiments_data_statistics.ipynb` — Experiment Overview
 1. Table: subjects × groups with counts
 2. Table: total FOVs, sessions, runs per subject (auto-discovered from filesystem)
 3. Boxplots: number of neurons per recording — left by group, right by experiment day (3 categories)
@@ -356,4 +357,14 @@ Shows the full API of `MiceDataset`:
 6. Histogram: run duration distribution in minutes (bins=15, KDE overlay)
 7. Bar chart: total recording time per group in minutes
 
-All figures saved to `FIGURES_ROOT/0.data_overview/01_data_statistics/`.
+All figures saved to `FIGURES_ROOT/0.data_overview/01_experiments_data_statistics/`.
+
+### `02_neural_data_statistics.ipynb` — Neural Data Overview
+1. Collect per-neuron spike statistics (mean amplitude, std, fraction active) across all recordings
+2. Mean spike amplitude distribution — histogram + KDE by group
+3. Population sparsity — fraction of neurons active per time bin, histogram + boxplot by group
+4. Example raster plot — raw spike events for 20 neurons over 60 s
+5. Tuning curve quality — selectivity index (peak/mean) distribution + boxplot by group
+6. Pairwise neuron correlations — KDE of Pearson r from binned spikes, one recording per group
+
+All figures saved to `FIGURES_ROOT/0.data_overview/02_neural_data_statistics/`.
