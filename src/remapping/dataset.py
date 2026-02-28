@@ -383,17 +383,23 @@ class MiceDataset:
         phi: np.ndarray,
         n_points: int = 360,
     ) -> tuple[np.ndarray, np.ndarray]:
-        """Bin firing rates by head-direction angle.
+        """Bin firing rates by angular position.
 
         Args:
             firing_rates: (T, N) array.
-            phi: (T,) angles in degrees.
+            phi: (T,) angles in degrees. NaN values are excluded.
             n_points: number of angular bins.
 
         Returns:
             ring_neural: (n_points, N) mean firing rate per bin.
             phi_bins: (n_points,) bin centres in degrees.
         """
+        # Exclude time points where phi is NaN
+        valid = np.isfinite(phi)
+        if not valid.all():
+            phi = phi[valid]
+            firing_rates = firing_rates[valid]
+
         dphi = 360.0 / n_points
         bin_idx = np.clip(np.floor((phi % 360) / dphi).astype(int), 0, n_points - 1)
 

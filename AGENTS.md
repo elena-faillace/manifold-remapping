@@ -225,7 +225,7 @@ For a notebook at `notebooks/X/Y.ipynb`, figures go to `FIGURES_ROOT/X/Y/`.
 
 ```python
 # In the setup cell:
-fig_path = get_figures_path("0.data_overview", "01_data_statistics")
+fig_path = get_figures_path("0.data_overview", "01_experiments_data_statistics.ipynb")
 
 # After each plot (before plt.show()):
 fig.savefig(fig_path / "descriptive_name.pdf")
@@ -336,7 +336,7 @@ plt.tight_layout()
 
 ---
 
-## Initial Notebooks to Create
+## Summary of notebooks
 
 ### `00_load_data.ipynb` — Data Loading Tutorial
 Shows the full API of `MiceDataset`:
@@ -360,11 +360,8 @@ Shows the full API of `MiceDataset`:
 All figures saved to `FIGURES_ROOT/0.data_overview/01_experiments_data_statistics/`.
 
 ### `02_neural_data_statistics.ipynb` — Neural Data Overview
-1. Collect per-neuron spike statistics (mean amplitude, std, fraction active) across all recordings
-2. Mean spike amplitude distribution — histogram + KDE by group
-3. Population sparsity — fraction of neurons active per time bin, histogram + boxplot by group
-4. Example raster plot — raw spike events for 20 neurons over 60 s
-5. Tuning curve quality — selectivity index (peak/mean) distribution + boxplot by group
-6. Pairwise neuron correlations — KDE of Pearson r from binned spikes, one recording per group
+1. Per-recording spike statistics table: n_neurons, duration, mean/std spike rate (Hz), fraction active, peak amplitude
+2. Example raster plot — raw spike events for 20 neurons over 60 s, colour-coded by amplitude
+3. Angular-position tuning curve selectivity (peak/mean) — horizontal KDE distributions by group
 
 All figures saved to `FIGURES_ROOT/0.data_overview/02_neural_data_statistics/`.

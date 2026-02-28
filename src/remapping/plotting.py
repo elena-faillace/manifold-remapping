@@ -71,6 +71,8 @@ class PlotStyle:
             "ytick.major.width": 0.8,
             "xtick.major.size": 3.5,
             "ytick.major.size": 3.5,
+            # Grid
+            "grid.linewidth": 0.3,
             # Figure
             "figure.dpi": 150,
             "savefig.dpi": 300,
