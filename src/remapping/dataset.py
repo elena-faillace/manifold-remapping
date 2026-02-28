@@ -515,7 +515,7 @@ class MiceDataset:
     # Public processing pipelines
     # ------------------------------------------------------------------
 
-    def load_spikes_binned(
+    def load_spikes(
         self,
         subject: Animals,
         fov,
@@ -536,7 +536,7 @@ class MiceDataset:
         cell_ids, registered = self._resolve_global_cells(subject, fov, session, cells_cols)
         return spikes_b, phi_b, time_b, (cell_ids, registered)
 
-    def load_all_data_from_spikes_binned_smoothed(
+    def load_firing_rates(
         self,
         subject: Animals,
         fov,
@@ -547,7 +547,10 @@ class MiceDataset:
         bins_smoothing: int = 3,
         bins_phi: int = 360,
     ) -> tuple[np.ndarray, np.ndarray, np.ndarray, tuple[list[str], bool], np.ndarray, np.ndarray]:
-        """Full pipeline: load -> filter -> bin -> smooth -> sqrt -> tuning curves.
+        """Full pipeline: load → bin → Gaussian-smooth → sqrt → tuning curves.
+
+        Convolves binned spikes with a Gaussian kernel (σ = bins_smoothing)
+        followed by a square-root transform to produce firing rates.
 
         Returns:
             firing_rates (T', N), phi_binned (T',), time_binned (T',),

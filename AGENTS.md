@@ -99,7 +99,7 @@ These are loaded by `remapping.config` and used everywhere instead of hardcoded 
   - Subject metadata: `get_all_subjects()`, `get_subjects_by_genotype(g)`, `get_subjects_by_age(a)`, `get_subjects_by_group(g, a)`, `get_subject_info(subject)`, `get_genotypes()`, `get_ages()`
   - Colours: `get_experiment_color(session, run)`, `get_subject_color(subject, fov)`, `get_colors_genotype_age(genotype, age)`, `get_group_palette()`
   - Recording discovery (filesystem scan, **cached** after first call per subject): `get_available_recordings(subject)`, `get_available_fovs(subject)`, `get_available_sessions(subject, fov)`, `get_available_runs(subject, fov, session)`
-  - Data loading: `load_data(subject, fov, session, run)` → raw spikes DataFrame; `load_spikes_binned(...)` → binned arrays; `load_all_data_from_spikes_binned_smoothed(...)` → fully processed firing rates + tuning curves
+  - Data loading: `load_data(subject, fov, session, run)` → raw spikes DataFrame; `load_spikes(...)` → binned spike arrays; `load_firing_rates(...)` → Gaussian-smoothed firing rates + tuning curves
   - Lightweight queries: `get_n_neurons(...)` → int (reads Parquet schema only); `get_duration(...)` → float seconds (reads only time column)
   - Cell indexing: `from_local_to_global_cell_index(subject, fov, session, local_indexes)`
   - Tuning curves: `get_tuning_curves(firing_rates, phi, n_points)` → `(ring_neural, phi_bins)` — vectorised with `np.bincount`
@@ -207,15 +207,6 @@ colors = BehaviorColors()
 style = PlotStyle()
 ```
 
-### Imports — No sys.path hacks
-```python
-# The package is installed editably, so just:
-from remapping.dataset import MiceDataset, Animals
-from remapping.processing import smooth_tuning_curves_circularly
-from remapping.plotting import BehaviorColors, PlotStyle, get_figures_path
-from remapping.metrics import safe_corrcoef, r_squared
-```
-
 ### Parameters Cell
 Every notebook has a clearly marked **Parameters** cell near the top defining all tuneable values.
 
@@ -305,6 +296,29 @@ Sessions/runs follow `mice.order_experiments` canonical order:
 6. fam1fam1rev: fam1 → fam1rev
 7. fam1fam1revfam1: fam1 → fam1rev → fam1r2
 
+### Distribution Plots — No Bar Charts
+
+**Never use bar plots.** Prefer violin plots or horizontal KDE distributions.  
+**Always overlay the actual data points** (e.g. `sns.stripplot`, `ax.scatter` with jitter) so individual observations remain visible.
+
+```python
+# Good — violin with strip overlay
+sns.violinplot(data=df, x="group", y="value", palette=palette, inner=None, alpha=0.3)
+sns.stripplot(data=df, x="group", y="value", palette=palette, size=3, alpha=0.7, jitter=True)
+
+# Good — horizontal KDE with individual points
+for group in GROUP_ORDER:
+    subset = df.loc[df["Group"] == group, "value"]
+    sns.kdeplot(subset, ax=ax, color=palette[group], fill=True, alpha=0.25, label=group)
+```
+
+Exceptions: count-based summaries (e.g. session-type counts) where raw data points don't exist may still use bars.
+
+### Terminology
+
+- Use **"angular position"** (not "head direction") when referring to the `phi` variable.
+- fam1 and fam2 are **distinct** familiar environments (not the same environment twice).
+
 ### Standard Plot Template
 
 ```python
@@ -343,7 +357,7 @@ Shows the full API of `MiceDataset`:
 1. List genotypes, ages, subjects per group
 2. Pick a subject → discover FOVs, sessions, runs
 3. Load raw data with `load_data()`
-4. Load processed data with `load_all_data_from_spikes_binned_smoothed()`
+4. Load processed data with `load_firing_rates()`
 5. Show effect of parameters: `only_moving`, `bins_compress`, `bins_smoothing`, `bins_phi`
 6. Plot example tuning curves (a few neurons) and firing rate traces
 7. Show tuning curve smoothing with `smooth_tuning_curves_circularly(kernel_size=20)`
@@ -361,7 +375,11 @@ All figures saved to `FIGURES_ROOT/0.data_overview/01_experiments_data_statistic
 
 ### `02_neural_data_statistics.ipynb` — Neural Data Overview
 1. Per-recording spike statistics table: n_neurons, duration, mean/std spike rate (Hz), fraction active, peak amplitude
-2. Example raster plot — raw spike events for 20 neurons over 60 s, colour-coded by amplitude
-3. Angular-position tuning curve selectivity (peak/mean) — horizontal KDE distributions by group
+2. Spike rate distributions — violin + strip overlay of mean rate and rate std by genotype × age group
+3. Example raster plot — raw spike events for 20 neurons over 60 s, heatmap coloured by amplitude
+4. Angular-position tuning curve selectivity (peak/mean) — overlaid KDE distributions by group
+5. Firing rate traces — example neurons showing Gaussian-smoothed + √-transformed activity
+6. Smoothing kernel sweep — median pairwise correlation vs σ, one recording per group
+7. Pairwise correlation distributions — KDE at σ = 0 / pipeline / wide for one example recording
 
 All figures saved to `FIGURES_ROOT/0.data_overview/02_neural_data_statistics/`.

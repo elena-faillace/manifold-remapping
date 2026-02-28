@@ -64,7 +64,7 @@ mice.get_duration(Animals.M62, 1, 'fam1fam2', 'fam1')   # float seconds
 df = mice.load_data(Animals.M62, 1, 'fam1fam2', 'fam1')
 
 # Load fully processed data (bin → smooth → sqrt → tuning curves)
-fr, phi, time, (cells, registered), tc, phi_bins = mice.load_all_data_from_spikes_binned_smoothed(
+fr, phi, time, (cells, registered), tc, phi_bins = mice.load_firing_rates(
     Animals.M62, 1, 'fam1fam2', 'fam1',
     only_moving=False, bins_compress=3, bins_smoothing=3, bins_phi=360,
 )
