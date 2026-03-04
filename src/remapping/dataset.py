@@ -77,14 +77,14 @@ EXPERIMENT_ORDER: list[tuple[str, str]] = [
 """Canonical display order for (session, run) pairs."""
 
 SESSION_TYPE_MAP: dict[str, str] = {
-    "fam1fam2": "fam1 → fam2",
-    "fam1fam2fam1": "fam1 → fam2",
-    "fam1fam2s2": "fam1 → fam2",
-    "fam1fam2s3": "fam1 → fam2",
-    "fam1nov": "fam1 → novel",
-    "fam1novfam1": "fam1 → novel",
-    "fam1fam1rev": "fam1 → reversed",
-    "fam1fam1revfam1": "fam1 → reversed",
+    "fam1fam2": "fam1 / fam2",
+    "fam1fam2fam1": "fam1 / fam2",
+    "fam1fam2s2": "fam1 / fam2",
+    "fam1fam2s3": "fam1 / fam2",
+    "fam1nov": "fam1 / novel",
+    "fam1novfam1": "fam1 / novel",
+    "fam1fam1rev": "fam1 / reversed",
+    "fam1fam1revfam1": "fam1 / reversed",
 }
 """Map each session type to one of the 3 recording-day categories.
 fam1 and fam2 are distinct familiar environments; novel is a new environment;
@@ -92,14 +92,14 @@ reversed is fam1 with reversed running direction.
 s2/s3 revisit sessions are grouped with their base experiment type."""
 
 EXPERIMENT_TYPE_ORDER: list[str] = [
-    "fam1 → fam2", "fam1 → novel", "fam1 → reversed",
+    "fam1 / fam2", "fam1 / novel", "fam1 / reversed",
 ]
 """Display order for the 3 recording-day categories."""
 
 EXPERIMENT_TYPE_COLORS: dict[str, str] = {
-    "fam1 → fam2": "#ff8800",      # orange  — from COLORS_EXPERIMENTS fam1fam2/fam1
-    "fam1 → novel": "#99ca3c",     # green   — from COLORS_EXPERIMENTS fam1nov/fam1
-    "fam1 → reversed": "#d727fc",  # purple  — from COLORS_EXPERIMENTS fam1fam1rev/fam1
+    "fam1 / fam2": "#ff8800",      # orange  — from COLORS_EXPERIMENTS fam1fam2/fam1
+    "fam1 / novel": "#99ca3c",     # green   — from COLORS_EXPERIMENTS fam1nov/fam1
+    "fam1 / reversed": "#d727fc",  # purple  — from COLORS_EXPERIMENTS fam1fam1rev/fam1
 }
 """One colour per recording-day category (picked from COLORS_EXPERIMENTS first-run colours)."""
 
@@ -413,13 +413,21 @@ class MiceDataset:
 
         mask = counts > 0
         ring_neural[mask] /= counts[mask, np.newaxis]
-        ring_neural[~mask] = np.nan
 
-        # Circular interpolation for empty bins
-        for b in np.where(~mask)[0]:
-            prev_b = (b - 1) % n_points
-            next_b = (b + 1) % n_points
-            ring_neural[b] = (ring_neural[prev_b] + ring_neural[next_b]) / 2
+        # Circular interpolation for empty bins using np.interp
+        # with wrapping, handles consecutive empty bins correctly
+        empty_idx = np.where(~mask)[0]
+        if len(empty_idx) > 0:
+            filled_idx = np.where(mask)[0]
+            if len(filled_idx) > 0:
+                # Extend filled indices/values for circular wrapping
+                ext_idx = np.concatenate([filled_idx - n_points, filled_idx, filled_idx + n_points])
+                for j in range(n_neurons):
+                    ext_vals = np.tile(ring_neural[filled_idx, j], 3)
+                    ring_neural[empty_idx, j] = np.interp(empty_idx, ext_idx, ext_vals)
+            else:
+                # No filled bins at all — fill with zeros
+                ring_neural[:] = 0.0
 
         phi_bins = np.arange(n_points) * dphi
         return ring_neural, phi_bins

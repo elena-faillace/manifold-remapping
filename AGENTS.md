@@ -347,6 +347,10 @@ plt.tight_layout()
 - **Type hints on public functions**: use standard Python type hints.
 - **Docstrings**: Google-style, brief.
 - **Dependencies**: only those in `pyproject.toml`. Stick to numpy, pandas, scipy, scikit-learn, matplotlib, seaborn.
+- **Warning-free notebooks**: after creating or editing a notebook, run all cells and fix any warnings or errors before considering the work done. Common pitfalls:
+  - `plt.tight_layout()` is incompatible with 3-D axes and `gridspec` — use `fig.set_layout_engine("constrained")` or manual `fig.subplots_adjust()` instead.
+  - Seaborn `palette` without `hue` is deprecated (v0.14+) — always pass `hue=` matching the `x` variable with `legend=False`.
+  - `ax.set_xticklabels()` without `ax.set_xticks()` first triggers a `UserWarning` — always call `set_xticks()` before `set_xticklabels()`.
 
 ---
 
