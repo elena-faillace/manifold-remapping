@@ -33,7 +33,8 @@ manifold-remapping/
     ├── 0.data_overview/
     │   ├── 00_load_data.ipynb
     │   ├── 01_experiments_data_statistics.ipynb
-    │   └── 02_neural_data_statistics.ipynb
+    │   ├── 02_neural_data_statistics.ipynb
+    │   └── 03_firing_rate_decoding.ipynb
     ├── 1.embeddings/
     │   ├── 00_pca_manifold.ipynb
     │   ├── 01_pca_manifolds_common_space.ipynb
@@ -409,6 +410,20 @@ All figures saved to `FIGURES_ROOT/0.data_overview/01_experiments_data_statistic
 7. Pairwise correlation distributions — KDE at σ = 0 / pipeline / wide for one example recording
 
 All figures saved to `FIGURES_ROOT/0.data_overview/02_neural_data_statistics/`.
+
+### `03_firing_rate_decoding.ipynb` — Firing-Rate Decoding: Space vs Time
+Linear regression (RidgeCV, auto-tuned α) to decode angular position and elapsed time from firing rates. 5-fold shuffled CV, 321 recordings (≥ 30 neurons).
+
+1. Data collection: per-recording RidgeCV decoding of [sin φ, cos φ] (space) and normalised time, run types: fam1, fam2, nov, fam1rev (fam1r2 grouped with fam1)
+2. Spatial decoding by run type (violin + strip): R² and mean angular error (°)
+3. Temporal decoding by run type (violin + strip): R²
+4. Space vs time scatter (coloured by run type)
+5. Spatial and temporal decoding by genotype × age group (2×2 faceted violins)
+6. Decoding R² vs number of neurons (scatter)
+7. Example decoding traces: true vs predicted angular position and time (1 per run type, median-R² recordings)
+8. Summary table: median [Q1, Q3] and mean ± SD per run type
+
+All figures saved to `FIGURES_ROOT/0.data_overview/03_firing_rate_decoding/`.
 
 ---
 

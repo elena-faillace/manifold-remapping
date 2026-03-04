@@ -28,6 +28,31 @@ Source: `notebooks/0.data_overview/`
 - Typical neuron count: ranges from ~30 to ~400+ per recording
 - Sampling rate: 30.9 Hz raw → ~10.3 Hz after 3× temporal binning
 
+### 0.3 — Firing-rate decoding: fam1 encodes space best, fam2 is close [confirmed]
+Source: `03_firing_rate_decoding.ipynb`
+
+RidgeCV (auto-tuned α, 5-fold shuffled CV) to decode angular position [sin φ, cos φ] and normalised time from firing rates. 321 recordings (≥ 30 neurons).
+
+**Spatial decoding R² by run type, median [Q1, Q3]**:
+
+| Run type | n | Space R² | Ang. error (°) |
+|----------|---|----------|----------------|
+| fam1 | 204 | 0.751 [0.605, 0.826] | 19.5° [14.9, 28.8] |
+| fam2 | 42 | 0.709 [0.614, 0.795] | 22.2° [16.7, 28.1] |
+| nov | 41 | 0.586 [0.450, 0.643] | 30.5° [26.4, 39.1] |
+| fam1rev | 34 | 0.612 [0.462, 0.689] | 28.4° [23.7, 38.9] |
+
+**Temporal decoding R²**:
+
+| Run type | Time R² |
+|----------|---------|
+| fam1 | 0.738 [0.653, 0.823] |
+| fam2 | 0.737 [0.633, 0.831] |
+| nov | 0.699 [0.522, 0.761] |
+| fam1rev | 0.676 [0.623, 0.767] |
+
+**Interpretation**: Spatial decoding is best for fam1, slightly lower for fam2, and notably worse for novel and reversed environments. fam2 is close to fam1 — the drop is modest (~0.04 R²). The largest gap is between familiar (fam1/fam2) and unfamiliar/changed environments (nov/fam1rev). Temporal decoding is high and similar across all run types (~0.7), consistent with slow drift being a general property of firing rates in all conditions. Both metrics scale with neuron count.
+
 ---
 
 ## 1 — Embeddings
